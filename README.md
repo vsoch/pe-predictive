@@ -1,13 +1,15 @@
 # pefinder Docker
 
-This is a Docker image that will run PE-Finder to produce output for some input data file. 
+This is a [Docker image](https://hub.docker.com/r/vanessa/pefinder/) that will run PE-Finder to produce output for some input data file. 
 
 Packages that need to be installed (e.g. seaborn and radnlp) have versions specified in case a future change breaks this code, you can see this in the top section of the [Dockerfile](Dockerfile).
 
 
 ## Getting Started
-You should first [install Docker](https://docs.docker.com/engine/installation/) and then build the container:
+You should first [install Docker](https://docs.docker.com/engine/installation/). The container is provided on [Docker Hub](https://hub.docker.com/r/vanessa/pefinder/) and can be downloaded from there when you run it, however if you want to look at or make changes to the code, it's recommended to clone the repo and build the container locally:
 
+    git clone http://www.github.com/vsoch/pe-predictive
+    cd pe-predictive
     docker build -t vanessa/pefinder .
 
 
