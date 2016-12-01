@@ -96,15 +96,15 @@ This is the final step to classify the markup (the `markup` column of your input
 
 
 ## How do I shell into the container?
-By default, running the container uses the `ENTRYPOINT`, meaning it is used as an executable and you do not enter the container. In the case that you want a container-based environment that is installed with the dependencies of PEFinder, or if you want to interactively work with the code, you may want to shell into the container. To do this, you can run the following:
+By default, running the container uses the `ENTRYPOINT`, meaning it is used as an executable and you do not enter the container. In the case that you want a container-based environment that is installed with the dependencies of PEFinder, or if you want to interactively work with the code, you may want to shell into the container. If there is a running container (eg an analysis) and you want to open up another terminal on your local machine to look inside (while it's running!) you need to get the 12 digit identifier with `docker ps`, and then plug it into this command:
 
-      docker run vanessa/pefinder --entrypoint /bin/sh
-
-If there is a running container (eg an analysis) and you want to open up another terminal on your local machine to look inside (while it's running!) you can do that too:
-
-      docker exec -it vanessa/pefinder bash
+      docker exec -it dc70464c6eb5 bash
 
 This says we want to execute (exec) and (interactive)(terminal) for container with id (af21bf1d48a6) and run the command (bash)
+
+If the container isn't running, then you can use `run`:
+
+      docker run -it --entrypoint /bin/sh vanessa/pefinder
 
 
 ## Why?
