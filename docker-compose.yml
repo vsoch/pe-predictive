@@ -1,0 +1,7 @@
+notebook:
+  restart: always
+  image: vanessa/pefinder
+  ports:
+    - "80:80"
+  volumes:
+    - .:/code
