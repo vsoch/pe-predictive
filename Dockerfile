@@ -13,10 +13,6 @@ RUN /opt/conda/bin/conda install jupyter -y --quiet
 RUN python -c "import nltk; nltk.download('all')"
 RUN mkdir /code
 
-# Add the start script to the container root
-ADD start.sh /
-RUN chmod u+x /start.sh
-
 # Add the notebooks
 ADD . /code
 WORKDIR /code/pefinder
