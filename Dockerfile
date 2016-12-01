@@ -19,11 +19,11 @@ RUN chmod u+x /start.sh
 
 # Add the notebooks
 ADD . /code
-WORKDIR /code
+WORKDIR /code/pefinder
 
 # Clean up
 RUN apt-get autoremove -y
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-CMD /start.sh
+CMD /code/pefinder/start.sh
