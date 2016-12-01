@@ -18,8 +18,9 @@ The original training and testing labels, for the model referenced in this paper
       Out[25]: array([None, 'New', 'Old', 'No Consensus', 'Mixed'], dtype=object)
 
 
+
 ### Knowledge Base
-The [kb](../data/kb.pkl) object contains the knowledge base used to do the classification, which has the following fields:
+The [kb](../data/kb.pkl) object contains the knowledge base used to do the classification, meaning that the above labels are moved through the model to produce classifictions according to this schema. The schema has the following fields:
 
 #### Schema
 
@@ -49,7 +50,31 @@ The [kb](../data/kb.pkl) object contains the knowledge base used to do the class
 
 Schema is important as it shows the correspondence of PEFinder's classifications to sets of labels. For example, before any parsing, a raw result looks like this:
 
+
       {'pulmonary_embolism': (2, "\n<tagObject>\n<id> 138767256616807571703976633608436776968 </id>\n<phrase> PULMONARY EMBOLISM </phrase>\n<literal> pulmonary embolism </literal>\n<category> ['pulmonary_embolism'] </category>\n<spanStart> 3 </spanStart>\n<spanStop> 21 </spanStop>\n<scopeStart> 0 </scopeStart>\n<scopeStop> 22 </scopeStop>\n</tagObject>\n", [])}
 
 
 Which is to say that for this case, the class given is `2` to signify that a classification of `Negative/Certain/Acute` was given, a `DISEASE_STATE` of 0 and `CERTAINTY_STATE` of 1.
+
+
+#### Stanford Schema
+To separate out the different components of each (number) in the schema, we came up with the following mapping:
+
+
+      # study performed for PE? (LOOKING_FOR_PE_label)
+      PE STUDY == 1 and NONPESTUDY == 0
+
+      # PE present: (label_PE_PRESENT_label)
+      POSITIVE PE == 1 and NEGATIVE PE == 0
+
+      # Certainty (label_CERTAINTY_label)
+      CERTAIN == 1, UNCERTAIN ==0
+
+      # Acuity: (label_ACUITY_label)
+      ACUTE == 1, CHRONIC == 0, MIXED == 2
+
+      # Quality of the exam (label_QUALITY_label)
+      DIAGNOSTIC == 1, NONDIAGNOSTIC == 2
+
+
+By default, the application returns these labels.

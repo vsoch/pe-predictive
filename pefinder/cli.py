@@ -5,6 +5,7 @@ from glob import glob
 from logman import logger
 import pickle
 import os
+import sys
 from utils import load_reports
 
 from pefinder import (
@@ -25,43 +26,90 @@ def get_parser():
                         type=str,
                         required=True)
 
-    parser.add_argument('--clean', action='store_true')
-    parser.add_argument('actions', nargs="+",
-                        choices=['mark', 'classify','all'],
-                        default='all')
+    parser.add_argument("--report_field", 
+                        dest='report_field', 
+                        help="the header column that contains the text of interest (default is report_text)", 
+                        type=str,
+                        default="report_text")
+
+    parser.add_argument("--id_field", 
+                        dest='id_field', 
+                        help="the header column that contains the id of the report (default is report_id)", 
+                        type=str,
+                        default="report_id")
+
+    parser.add_argument("--result_field", 
+                        dest='result_field', 
+                        help="the field to save pefinder (chapman) result to, not saved unless --no-remap is specified.", 
+                        type=str,
+                        default="pe_result")
+
+    parser.add_argument("--delim", 
+                        dest='delim', 
+                        help="the delimiter separating the input reports data. Default is tab (\\t)", 
+                        type=str,
+                        default="\t")
+
+
+    parser.add_argument("--output", 
+                        dest='output', 
+                        help="Desired output file (.tsv)", 
+                        type=str,
+                        required=True)
+
+    parser.add_argument('--no-remap',
+                        dest='remapping',
+                        help="don't remap multilabel PEFinder result to Stanford labels",
+                        default=True,
+                        action='store_false')
+
+    parser.add_argument('--run',
+                        dest="actions",
+                        help="mark (mark), classify (classify) or mark and classify (analyze) reports.",
+                        choices=['mark', 'classify','analyze'],
+                        default='analyze')
 
     return parser
 
 
 
 def main():
-    logger.info("\n***STARTING PE-FINDER DOCKER****")
     parser = get_parser()
     
     try:
         args = parser.parse_args()
     except:
-        logger.error("Input args to %s improperly set, exiting.", os.path.abspath(__file__))
-        parser.print_help()
         sys.exit(0)
 
+    # Tell the user what is going to be used, in case is incorrect
+    logger.info("\n***STARTING PE-FINDER DOCKER****")
+    logger.info("Will use column %s as report text.",args.report_field)
+    logger.info("Will use column %s as report id.",args.id_field)
 
     # Load the reports
-    reports = load_reports(args.reports)
+    reports = load_reports(reports_path=args.reports,
+                           report_field=args.report_field,
+                           id_field=args.id_field,
+                           delim=args.delim)
 
     # What actions does the user want to run?
-    if "all" in args.actions:
-        cls = analyze_report(reports)
-    
-    elif "mark" in args.actions:
-        cls = mark_report(reports):
+    if "analyze" == args.actions:
+        reports = analyze_reports(reports,result_field=args.result_field)
 
-    elif "classify" in args.actions:
-        cls = classify_report(reports):
+        # Remap to Stanford labels (default True)
+        if args.remapping == True:
+            reports = label_remapping(reports=reports,
+                                      result_field=args.result_field,
+                                      drop_result=True)
 
-    #TODO:
+    elif "mark" == args.actions:
+        reports = mark_reports(reports)
+
+    elif "classify" == args.actions:
+        reports = classify_reports(reports)
+
     # Parse result in some format, provide visualization? 
-
+    reports.to_csv(output,sep="\t",index=False)
     
 
 if __name__ == '__main__':

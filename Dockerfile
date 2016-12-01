@@ -12,6 +12,7 @@ RUN pip install pydotplus
 RUN /opt/conda/bin/conda install jupyter -y --quiet 
 RUN python -c "import nltk; nltk.download('all')"
 RUN mkdir /code
+RUN mkdir /data
 
 # Add the notebooks
 ADD . /code
@@ -21,5 +22,6 @@ WORKDIR /code/pefinder
 RUN apt-get autoremove -y
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN chmod u+x /code/pefinder/cli.py
 
-CMD ["/code/pefinder/start.sh","$@"]
+ENTRYPOINT ["python","/code/pefinder/cli.py"]
