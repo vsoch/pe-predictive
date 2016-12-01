@@ -26,4 +26,4 @@ RUN apt-get autoremove -y
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-CMD /code/pefinder/start.sh
+CMD ["/code/pefinder/start.sh","$@"]
