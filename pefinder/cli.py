@@ -11,7 +11,8 @@ from utils import load_reports
 from pefinder import (
     mark_reports, 
     classify_reports, 
-    analyze_reports
+    analyze_reports,
+    label_remapping
 )
 
 
@@ -82,7 +83,7 @@ def main():
         sys.exit(0)
 
     # Tell the user what is going to be used, in case is incorrect
-    logger.info("\n***STARTING PE-FINDER DOCKER****")
+    logger.info("\n***STARTING PE-FINDER CONTAINER****")
     logger.info("Will use column %s as report text.",args.report_field)
     logger.info("Will use column %s as report id.",args.id_field)
 
