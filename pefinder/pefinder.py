@@ -15,6 +15,8 @@ import radnlp.utils as utils
 import radnlp.view as rview
 
 from logman import logger
+import json
+import sys
 
 logger.info("radnlp version %s",radnlp.__version__)
 
@@ -83,39 +85,20 @@ def analyze_report(report, kb=None):
 ######################################################################################
 
 
-def mark_reports(reports,kb=None,result_field=None):
+def mark_reports(reports,kb=None,result_field=None,report_field=None):
     '''mark_reports is a convenience wrapper for mark_report
     :param reports: a table of reports, pandas data frame from load_reports
     :param kb: the knowledge base
     :param result_field: where to put the result. If none, will be placed in markup
     '''
+    if report_field == None:
+        report_field = 'report_text'
     logger.info("Marking %s reports, please wait...",reports.shape[0])
     result = reports.apply(lambda x: mark_report(x[report_field], 
                                                  kb=kb), 
                                                  axis=1)
     if result_field == None:
         result_field = "markup"
-    reports[result_field] = result
-    return reports
-
-
-def classify_reports(reports, kb=None, result_field=None):
-    '''classify_reports is a convenience wrapper for classify_report
-    :param reports: a table of reports, pandas data frame from load_reports,
-    with one of the columns corresponding to "markup"
-    :param kb: the knowledge base
-    '''
-    if "markup" not in reports.columns:
-        logger.error("Field markup must be included in data frame. Exiting")
-        sys.exit(1)
-
-    logger.info("Classifying %s reports, please wait...",reports.shape[0])
-    result = reports.apply(lambda x: classify_report(x["markup"], 
-                                                     kb=kb), 
-                                                     axis=1)
-
-    if result_field == None:
-        result_field = "pe_result"
     reports[result_field] = result
     return reports
 

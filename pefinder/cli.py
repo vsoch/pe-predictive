@@ -10,7 +10,6 @@ from utils import load_reports
 
 from pefinder import (
     mark_reports, 
-    classify_reports, 
     analyze_reports,
     label_remapping
 )
@@ -66,9 +65,9 @@ def get_parser():
 
     parser.add_argument('--run',
                         dest="actions",
-                        help="mark (mark), classify (classify) or mark and classify (analyze) reports.",
-                        choices=['mark', 'classify','analyze'],
-                        default='analyze')
+                        help="mark (mark), or classify (classify) reports.",
+                        choices=['classify','mark'],
+                        default='classify')
 
     return parser
 
@@ -106,12 +105,9 @@ def main():
     elif "mark" == args.actions:
         reports = mark_reports(reports)
 
-    elif "classify" == args.actions:
-        reports = classify_reports(reports)
-
     # Parse result in some format, provide visualization? 
     reports.to_csv(args.output,sep="\t",index=False)
-    
+    logger.info("Result for %s saved to %s",args.actions,args.output)    
 
 if __name__ == '__main__':
     main()

@@ -26,7 +26,7 @@ The entry to the container is done simply by using it as an executable:
 	usage: cli.py [-h] --reports REPORTS [--report_field REPORT_FIELD]
 		      [--id_field ID_FIELD] [--result_field RESULT_FIELD]
 		      [--delim DELIM] --output OUTPUT [--no-remap]
-		      [--run {mark,classify,analyze}]
+		      [--run {mark,classify}]
 
 	generate predictions for PE for a set of reports (impressions)
 
@@ -46,9 +46,8 @@ The entry to the container is done simply by using it as an executable:
 	  --output OUTPUT       Desired output file (.tsv)
 	  --no-remap            don't remap multilabel PEFinder result to Stanford
 		                labels
-	  --run {mark,classify,analyze}
-		                mark (mark), classify (classify) or mark and classify
-		                (analyze) reports.
+	  --run {mark,classify}
+		                mark (mark), or classify (classify) reports.
 
 You are minimally going to need to provide `--reports`, and `--output`, which assumes that the report text is in a column called `report_text`, the report id is in a column called `report_id`, and you want to perform all actions (mark and classify) as the default for the `--run` command. The most basic running command we will use looks like this:
 
@@ -90,7 +89,7 @@ The function of the container is to take reports and produce a `.tsv` file with 
 	INFO:pefinder:radnlp version 0.2.0.8
 	usage: cli.py [-h] --reports REPORTS [--report_field REPORT_FIELD]
 		      [--id_field ID_FIELD] [--result_field RESULT_FIELD] --output
-		      OUTPUT [--no-remap] [--run {mark,classify,analyze}]
+		      OUTPUT [--no-remap] [--run {mark,classify}]
 
 	generate predictions for PE for a set of reports (impressions)
 
@@ -108,9 +107,8 @@ The function of the container is to take reports and produce a `.tsv` file with 
 	  --output OUTPUT       Desired output file (.tsv)
 	  --no-remap            don't remap multilabel PEFinder result to Stanford
 		                labels
-	  --run {mark,classify,analyze}
-		                mark (mark), classify (classify) or mark and classify
-		                (analyze) reports.
+	  --run {mark,classify}
+		                mark (mark), or classify (classify) reports.
 
 
 You are minimally going to need to provide `--reports`, and `--output`, which assumes that the report text is in a column called `report_text`, the report id is in a column called `report_id`, and you want to perform all actions (mark and classify) as the default for the `--run` command. The most basic running command we will use looks like this:
@@ -160,12 +158,12 @@ Analyzing reports means marking and classification.
         # Docker
 	docker run -v $PWD:/data vanessa/pefinder --reports /data/pefinder/data/stanford_data.csv --delim , --output /data/stanford_result.tsv
 
-        # Singularity 
+        # Singularity
         singularity run -B $PWD:/data pefinder.img --reports /data/pefinder/data/stanford_data.csv --delim , --output /data/stanford_result.tsv
 
 	INFO:pefinder:radnlp version 0.2.0.8
 	INFO:pefinder:
-	***STARTING PE-FINDER DOCKER****
+	***STARTING PE-FINDER CONTAINER****
 	INFO:pefinder:Will use column report_text as report text.
 	INFO:pefinder:Will use column report_id as report id.
 	INFO:pefinder:reports path provided is /data/pefinder/data/stanford_data.csv
