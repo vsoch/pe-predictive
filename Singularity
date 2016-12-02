@@ -9,6 +9,6 @@ From: vanessa/pefinder
 
 %post
 
-    sudo chmod -R 777 /data
+    chmod -R 777 /data
     python -c "import nltk; nltk.download('all')"
     echo "To run, ./pefinder.img --help"
