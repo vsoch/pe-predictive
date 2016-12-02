@@ -10,5 +10,5 @@ From: vanessa/pefinder
 %post
 
     chmod -R 777 /data
-    /opt/conda/bin/python -c "import nltk; nltk.download('all')"
+    /opt/conda/bin/python -m nltk.downloader -d /usr/local/share/nltk_data all
     echo "To run, ./pefinder.img --help"

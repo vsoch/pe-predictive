@@ -11,7 +11,8 @@ RUN pip install nltk
 
 # Install jupyter notebook
 RUN /opt/conda/bin/conda install jupyter -y --quiet 
-RUN python -c "import nltk; nltk.download('all')"
+RUN /opt/conda/bin/python -m nltk.downloader -d /usr/local/share/nltk_data all
+
 RUN mkdir /code
 RUN mkdir /data
 
