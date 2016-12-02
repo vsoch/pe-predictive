@@ -110,7 +110,7 @@ def main():
         reports = classify_reports(reports)
 
     # Parse result in some format, provide visualization? 
-    reports.to_csv(output,sep="\t",index=False)
+    reports.to_csv(args.output,sep="\t",index=False)
     
 
 if __name__ == '__main__':
