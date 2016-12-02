@@ -152,8 +152,8 @@ For your input data, you have two options:
 ## Examples
 For each of the examples, the equivalent Docker and Singularity commands are provided.
 
-### Analyzing Reports
-Analyzing reports means marking and classification.
+### Classifying Reports
+Classifying reports means marking and classification. This is default.
 
         # Docker
 	docker run -v $PWD:/data vanessa/pefinder --reports /data/pefinder/data/stanford_data.csv --delim , --output /data/stanford_result.tsv
@@ -169,6 +169,8 @@ Analyzing reports means marking and classification.
 	INFO:pefinder:reports path provided is /data/pefinder/data/stanford_data.csv
 	INFO:pefinder:Analyzing 117816 reports, please wait...
 
+Adding `--run classify` would do the equivalent.
+
 
 ### Marking Reports
 This is an intermediate step that won't give you classification labels. You might do this to look at the data. The markup is output in the field `markup` of the results file.
@@ -178,6 +180,7 @@ This is an intermediate step that won't give you classification labels. You migh
 
         # Singularity
         singularity run -B $PWD:/data pefinder.img --run mark --reports /data/pefinder/data/stanford_data.csv --delim , --output /data/stanford_result.tsv
+
 
 ### Classifying Reports
 This is the final step to classify the markup (the `markup` column of your input data) and produce the classification. If you just want this classification, you should run the first example, Analyzing Reports.
