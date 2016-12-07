@@ -104,20 +104,25 @@ The function of the container is to take reports and produce a `.tsv` file with 
 	  --result_field RESULT_FIELD
 		                the field to save pefinder (chapman) result to, not
 		                saved unless --no-remap is specified.
+	  --delim DELIM         the delimiter separating the input reports data.
+		                Default is tab (\t)
 	  --output OUTPUT       Desired output file (.tsv)
+	  --verbose             Print more verbose output (useful for analyzing more
+		                reports)
 	  --no-remap            don't remap multilabel PEFinder result to Stanford
 		                labels
-	  --run {mark,classify}
+	  --run {classify,mark}
 		                mark (mark), or classify (classify) reports.
 
 
-You are minimally going to need to provide `--reports`, and `--output`, which assumes that the report text is in a column called `report_text`, the report id is in a column called `report_id`, and you want to perform all actions (mark and classify) as the default for the `--run` command. The most basic running command we will use looks like this:
+You are minimally going to need to provide `--reports`, and `--output`, which assumes that the report text is in a column called `report_text`, the report id is in a column called `report_id`, and you want to perform all actions (mark and classify) as the default for the `--run` command. If you have a lot of reports, it is recommended to use the `--verbose` flag to give you a countdown of classifications remaining. The most basic running command we will use looks like this:
 
 
       docker run -v $PWD:/data vanessa/pefinder --reports /data/pefinder/data/stanford_data.csv --delim , --output /data/stanford_result.tsv
 
 
 The `-v` argument means "volume" and it says that we want to map the present working directory (`$PWD`) to the folder in the container called `/data`. We do this so that we can read and write to `/data` in the container, and the result will appear in our present working directory. Otherwise, the result would remain in the container and we wouldn't have easy access to it. Note that the `--reports` input is also relative to `/data`, meaning that the input is located at `$PWD/pefinder/data/stanford_reports.csv`. The `--output` variable, then, is relative to inside of the container. By writing to `/data/stanford_result.tsv` we are going to see the file `stanford_result.tsv` appear in our `$PWD` because of the volume. 
+
 
 ## How do I shell into the container?
 By default, running the container uses the `ENTRYPOINT`, meaning it is used as an executable and you do not enter the container. In the case that you want a container-based environment that is installed with the dependencies of PEFinder, or if you want to interactively work with the code, you may want to shell into the container. If there is a running container (eg an analysis) and you want to open up another terminal on your local machine to look inside (while it's running!) you need to get the 12 digit identifier with `docker ps`, and then plug it into this command:

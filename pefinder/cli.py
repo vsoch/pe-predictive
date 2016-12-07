@@ -50,12 +50,17 @@ def get_parser():
                         type=str,
                         default="\t")
 
-
     parser.add_argument("--output", 
                         dest='output', 
                         help="Desired output file (.tsv)", 
                         type=str,
                         required=True)
+
+    parser.add_argument("--verbose", 
+                        dest='verbose', 
+                        help="Print more verbose output (useful for analyzing more reports)", 
+                        action='store_true',
+                        required=False)
 
     parser.add_argument('--no-remap',
                         dest='remapping',
@@ -85,6 +90,7 @@ def main():
     logger.info("\n***STARTING PE-FINDER CONTAINER****")
     logger.info("Will use column %s as report text.",args.report_field)
     logger.info("Will use column %s as report id.",args.id_field)
+    logger.info("Verbosity set to %s.",args.verbose)
 
     # Load the reports
     reports = load_reports(reports_path=args.reports,
@@ -94,7 +100,9 @@ def main():
 
     # What actions does the user want to run?
     if "classify" == args.actions:
-        reports = analyze_reports(reports,result_field=args.result_field)
+        reports = analyze_reports(reports,
+                                  result_field=args.result_field,
+                                  verbose=args.verbose)
 
         # Remap to Stanford labels (default True)
         if args.remapping == True:
@@ -103,7 +111,8 @@ def main():
                                       drop_result=True)
 
     elif "mark" == args.actions:
-        reports = mark_reports(reports)
+        reports = mark_reports(reports,
+                               verbose=args.verbose)
 
     # Parse result in some format, provide visualization? 
     reports.to_csv(args.output,sep="\t",index=False)

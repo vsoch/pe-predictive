@@ -20,6 +20,9 @@ import sys
 
 logger.info("radnlp version %s",radnlp.__version__)
 
+# global count, in case verbosity desired
+count = 0
+
 def load_knowledge_base():
     '''load_knowledge_base returns the Chapman knowledge base,
     which currently is picked using python 3 (and works in this container
@@ -27,16 +30,33 @@ def load_knowledge_base():
     '''
     return pickle.load(open('data/kb.pkl','rb'))
 
+
+def print_count(function=None,verbose=False):
+    '''print_count will print the global count, in the case that verbosity 
+    is True. 
+    :param function: the function being performed. Default "Classify"
+    :param verbose: a check to print the count or not
+    '''
+    if verbose == True:
+        if function == None:
+            function = "classify"
+
+        global count
+        print("Finished %sing report: %s remaining." %(function,count))
+        count = count - 1
+
+
 ######################################################################################
 # Single Report Functions
 ######################################################################################
 
 
-def mark_report(report, kb=None):
+def mark_report(report, kb=None, verbose=False):
     '''mark_report will take a report, modifiers, and targets, and
     create a pyConTextGraph object with context markup
     :param report: an individual report's text
     :param kb: the knowledge base
+    :param verbose: print output (count)
     '''
     if kb==None:
         kb = load_knowledge_base()
@@ -44,58 +64,77 @@ def mark_report(report, kb=None):
     markup = utils.mark_report(split.get_sentences(report),
                                kb['modifiers'],
                                kb['targets'])
+
+    # Keep user updated on report count
+    print_count(function="mark",
+                verbose=verbose)
+
     return markup
 
 
-def classify_report(markup, kb=None):
+def classify_report(markup, kb=None, verbose=False):
     '''classify_report will use the rules in the knowledge base to classify
     a new report.
     :param markup: the marked up report, returned from mark_report
     :param kb: the knowledge base
+    :param verbose: print output (count)
     '''
+
     if kb==None:
         kb = load_knowledge_base()
 
-    return classifier.classify_document_targets(markup,
-                                                 kb['rules'][0],
-                                                 kb['rules'][1],
-                                                 kb['rules'][2],
-                                                 kb['schema'])
+    result = classifier.classify_document_targets(markup,
+                                                  kb['rules'][0],
+                                                  kb['rules'][1],
+                                                  kb['rules'][2],
+                                                  kb['schema'])
+    # Keep user updated on report count
+    print_count(verbose=verbose)
+    return result
 
-def analyze_report(report, kb=None):
+def analyze_report(report, kb=None, verbose=False):
     """
     given an individual radiology report, creates a pyConTextGraph
     object that contains the context markup
     report: a text string containing the radiology reports
+    :param verbose: print output (count)
     """
+
     if kb == None:
         kb = load_knowledge_base()
 
     markup = mark_report(report, kb=kb)
     clssfy = classify_report(markup, kb=kb)
 
-    return classrslts(context_document=markup,
-                      exam_type="ctpa", 
-                      report_text=report, 
-                      classification_result=clssfy)
+    result = classrslts(context_document=markup,
+                        exam_type="ctpa", 
+                        report_text=report, 
+                        classification_result=clssfy)
 
+    # Keep user updated on report count
+    print_count(verbose=verbose)
+    return result
 
 ######################################################################################
 # Multiple Report Functions (wrappers for convenience)
 ######################################################################################
 
 
-def mark_reports(reports,kb=None,result_field=None,report_field=None):
+def mark_reports(reports,kb=None,result_field=None,report_field=None,verbose=False):
     '''mark_reports is a convenience wrapper for mark_report
     :param reports: a table of reports, pandas data frame from load_reports
     :param kb: the knowledge base
     :param result_field: where to put the result. If none, will be placed in markup
+    :param verbose: print verbose, meaning a statement for each report
     '''
+    global count
+    count = len(reports.index)
     if report_field == None:
         report_field = 'report_text'
     logger.info("Marking %s reports, please wait...",reports.shape[0])
     result = reports.apply(lambda x: mark_report(x[report_field], 
-                                                 kb=kb), 
+                                                 kb=kb,
+                                                 verbose=verbose), 
                                                  axis=1)
     if result_field == None:
         result_field = "markup"
@@ -103,20 +142,24 @@ def mark_reports(reports,kb=None,result_field=None,report_field=None):
     return reports
 
 
-def analyze_reports(reports,kb=None,report_field=None,result_field=None):
+def analyze_reports(reports,kb=None,report_field=None,result_field=None,verbose=False):
     '''analyze_reports will apply the function analyze_report to the data frame
     of reports
     :param reports: the pandas data frame of reports from load_reports
     :param kb: the knowledge base
     :param report_field: the field in reports with the report text
     :param result_field: the field in reports to write the result to
+    :param verbose: print verbose, meaning a statement for each report
     '''
+    global count
+    count = len(reports.index)
+
     if report_field == None:
         report_field = "report_text"
 
     logger.info("Analyzing %s reports, please wait...",reports.shape[0])
     result = reports.apply(lambda x: analyze_report(x[report_field], 
-                                                    kb=kb), 
+                                                    kb=kb,verbose=verbose), 
                                                     axis=1)
     if result_field == None:
         result_field = "pe_result"
