@@ -93,7 +93,7 @@ def main():
                            delim=args.delim)
 
     # What actions does the user want to run?
-    if "analyze" == args.actions:
+    if "classify" == args.actions:
         reports = analyze_reports(reports,result_field=args.result_field)
 
         # Remap to Stanford labels (default True)
