@@ -198,7 +198,7 @@ def label_remapping(reports,kb=None,result_field=None,drop_result=True):
     if kb == None:
         kb = load_knowledge_base()
 
-    new_columns = ["PE_PRESENT_label","CERTAINTY_label","ACUITY_label",
+    new_columns = ["PE_PRESENT_label","CERTAINTY_label","QUALITY_label",
                    "LOOKING_FOR_PE_label","ACUITY_label"]
     for new_column in new_columns:
         reports[new_column] = None
