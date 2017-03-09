@@ -10,4 +10,4 @@ From: vanessa/pefinder
 %post
 
     chmod -R 777 /data
-   echo "To run, ./pefinder.img --help"
+    echo "To run, ./pefinder.img --help"
